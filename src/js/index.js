@@ -3,9 +3,26 @@ import ReactDOM from 'react-dom';
 
 class App extends React.Component{
 
+    constructor(){
+        super();
+        this.user = {
+            firstName : "食",
+            lastName : "パンタ",
+            avatarUrl: "https://s3.arkjp.net/misskey/thumbnail-afb5559e-e58d-4141-80a0-0a33eb1f6ecc.jpg"
+        };
+        
+    }
+
+    formatName(user){
+        return user.firstName + user.lastName;
+    }
+
     render(){
         return (
-            <h1>Welcome</h1>
+            <div>
+                <h1>Welcome {this.formatName(this.user)}</h1>
+                <img src={this.user.avatarUrl}/>
+            </div>
         );
     }
 }
