@@ -22,12 +22,23 @@ class App extends React.Component{
             <div>
                 <h1>Welcome {this.formatName(this.user)}</h1>
                 <img src={this.user.avatarUrl}/>
+                <Welcome name="Panta"/>
+                <Welcome name="Gouya"/>
+                <Welcome name="セイバー"/>
+
             </div>
         );
     }
 }
 
-
+class Welcome extends React.Component{
+    
+    render(){
+        return (
+            <h1>Hello {this.props.name}</h1>
+        );
+    }
+}
 
 function tick(){
     const element = (
