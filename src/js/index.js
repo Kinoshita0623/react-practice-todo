@@ -1,59 +1,117 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM, { render } from 'react-dom';
+
+
+
+
 
 class App extends React.Component{
 
     constructor(){
         super();
-        this.user = {
-            firstName : "食",
-            lastName : "パンタ",
-            avatarUrl: "https://s3.arkjp.net/misskey/thumbnail-afb5559e-e58d-4141-80a0-0a33eb1f6ecc.jpg"
-        };
         
+        this.state = {
+            todos: [
+                { 
+                    id: 0,
+                    title: "ほげほげ"
+                }
+            ]
+        };
+        this.onCreatedTodo = this.onCreatedTodo.bind(this);
     }
 
-    formatName(user){
-        return user.firstName + user.lastName;
-    }
 
+    onCreatedTodo(todo){
+        todo.id = this.state.todos.length;
+
+        const { todos } = this.state;
+        todos.push(todo);
+
+        this.setState({ todos });
+        console.log("create todo:" + this.state.todos);
+    }
+    
     render(){
         return (
             <div>
-                <h1>Welcome {this.formatName(this.user)}</h1>
-                <img src={this.user.avatarUrl}/>
-                <Welcome name="Panta"/>
-                <Welcome name="Gouya"/>
-                <Welcome name="セイバー"/>
-
+                <h1>Todoリスト</h1>
+                <TodoList todos={this.state.todos}/>
+                <TodoForm createTodo={this.onCreatedTodo.bind(this)}/>
             </div>
         );
     }
 }
 
-class Welcome extends React.Component{
-    
+class TodoList extends React.Component{
+
+   
     render(){
+        
+        let todos = this.props.todos.map(
+            (t)=>{
+                console.log(t);
+                return <Todo key={t.id} todo={t}/>
+
+            }
+
+        );
+        console.log(this.props.todos);
         return (
-            <h1>Hello {this.props.name}</h1>
+            <ul>{todos}</ul>
         );
     }
 }
 
-function tick(){
-    const element = (
-        <div>
-            <h1>Hello world</h1>
-            <h2>It is { new Date().toLocaleTimeString() }</h2>
-        </div>
-        
-    );
+class Todo extends React.Component{
 
-    ReactDOM.render(element, document.getElementById("root"));
-
+    render(){
+        return (
+            <li>{this.props.todo.title}</li>
+        );
+    }
 }
 
-setInterval(tick, 1000);
+class TodoForm extends React.Component{
+
+    constructor(){
+        super();
+
+        this.state = {
+            title: '',
+            id: 0
+        };
+    }
+
+    onTitleChanged(e){
+        console.log(e);
+        this.setState(
+            {
+                title: e.target.value
+            }
+        );
+    }
+
+    createTodo(){
+        this.props.createTodo(this.state)
+        console.log(this.state);
+        this.setState({
+            title: ''
+        });
+    }
+
+    render(){
+        return (
+            <div>
+                <input type="text" onChange={this.onTitleChanged.bind(this)} value={this.state.title}></input>
+                <button onClick={this.createTodo.bind(this)}>Create</button>
+            </div>
+        );
+    }
+}
+
+
+
 
 const app = document.getElementById('app');
 ReactDOM.render(<App/>, app);
