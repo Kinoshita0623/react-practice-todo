@@ -22,7 +22,7 @@ export default class TodoForm extends React.Component{
     }
 
     createTodo(){
-        this.props.createTodo(this.state)
+        this.props.createTodo(this.state.title);
         console.log(this.state);
         this.setState({
             title: ''

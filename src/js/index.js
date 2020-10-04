@@ -1,9 +1,19 @@
-import React from 'react';
+import React , { Component, } from 'react';
+
+import { connect } from 'react-redux'
+
 import ReactDOM, { render } from 'react-dom';
 
 import TodoList from './components/TodoList';
 import TodoForm from './components/TodoForm';
 
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
+
+import { todoApp, ActionCreator } from './store';
+
+
+let store = createStore(todoApp);
 
 
 
@@ -13,75 +23,72 @@ class App extends React.Component{
     constructor(){
         super();
         
-        this.state = {
-            todos: [
-                { 
-                    id: 0,
-                    title: "ほげほげ",
-                    isCompleted: false
-                }
-            ]
-        };
+
         this.onCreatedTodo = this.onCreatedTodo.bind(this);
+        this.actionCreator = new ActionCreator();
+        
     }
 
 
-    onCreatedTodo(todo){
-        todo.id = this.state.todos.length;
-        this.isCompleted = false;
-
-        const { todos } = this.state;
-        todos.push(todo);
-
-        this.setState({ todos });
-        console.log("create todo:" + this.state.todos);
+    onCreatedTodo(title){
+        this.dispatch(this.actionCreator.createTodo(title));
     }
 
-    onTodoChanged(todo){
-        let { todos } = this.state;
-        let updated = todos.map((t)=>{
-            if(t.id == todo.id){
-                console.log("更新検出");
-                return todo;
-            }
-            return t;
-        })
-        console.log("更新があった:" + todo.title + "," + todo.id);
-        console.log(updated);
-        this.setState({ todos: updated });
-    }
+   
     
 
     
 
     toggleCompleteTodo(t){
 
-        let todo = {
-            ...t
-        };
-
-        console.log(todo);
-        todo.isCompleted = !t.isCompleted;
-        console.log(todo);
-        this.onTodoChanged(todo)
+        if(t.isCompleted){
+            this.dispatch(this.actionCreator.unCompleteTodo(t));
+        }else{
+            this.dispatch(this.actionCreator.completeTodo(t));
+        }
     }
 
     render(){
+        const { todos, dispatch } = this.props;
+        this.dispatch = dispatch;
+        console.log("todos");
+        console.log(todos);
+        console.log("props");
+        console.log(this.props);
         return (
             <div>
                 <h1>Todoリスト</h1>
-                <TodoList todos={this.state.todos} onToggleCompleteTodo={this.toggleCompleteTodo.bind(this)}/>
+                <TodoList todos={todos} onToggleCompleteTodo={this.toggleCompleteTodo.bind(this)}/>
                 <TodoForm createTodo={this.onCreatedTodo.bind(this)}/>
             </div>
         );
     }
 }
 
+/*App.PropTypes = {
+    todos: PropTypes.arrayOf(PropTypes.shape({
+        title: PropTypes.string.isRequired,
+        isCompleted: PropTypes.bool.isRequired,
+        id: PropTypes.number.isRequired,
+    }))
+}*/
 
+function getTodos(state){
+    return {
+        todos: state.todos
+    };
+}
 
+export default connect(getTodos)(App);
 
 
 
 
 const app = document.getElementById('app');
-ReactDOM.render(<App/>, app);
+console.log(store);
+console.log(store.getState());
+ReactDOM.render(
+    <Provider store={store} >
+        <App/>
+    </Provider>
+, app);
