@@ -1,6 +1,9 @@
 import React from 'react';
 import ReactDOM, { render } from 'react-dom';
 
+import TodoList from './components/TodoList';
+import TodoForm from './components/TodoForm';
+
 
 
 
@@ -74,79 +77,6 @@ class App extends React.Component{
     }
 }
 
-class TodoList extends React.Component{
-
-
-    render(){
-        
-        let todos = this.props.todos.map(
-            (t)=>{
-                console.log(t);
-                return <Todo key={t.id} todo={t} onToggleCompleteTodo={this.props.onToggleCompleteTodo}/>
-
-            }
-
-        );
-        console.log(this.props.todos);
-        return (
-            <ul>{todos}</ul>
-        );
-    }
-}
-
-class Todo extends React.Component{
-
-   onChange(){
-       this.props.onToggleCompleteTodo(this.props.todo)
-   }
-
-    render(){
-        return (
-            <li className={ this.props.todo.isCompleted ? 'completed' : ''}>
-                <input type="checkbox" checked={this.props.isCompleted} onClick={this.onChange.bind(this)}/>
-                {this.props.todo.title}
-            </li>
-        );
-    }
-}
-
-class TodoForm extends React.Component{
-
-    constructor(){
-        super();
-
-        this.state = {
-            title: '',
-            id: 0
-        };
-    }
-
-    onTitleChanged(e){
-        console.log(e);
-        this.setState(
-            {
-                title: e.target.value
-            }
-        );
-    }
-
-    createTodo(){
-        this.props.createTodo(this.state)
-        console.log(this.state);
-        this.setState({
-            title: ''
-        });
-    }
-
-    render(){
-        return (
-            <div>
-                <input type="text" onChange={this.onTitleChanged.bind(this)} value={this.state.title}></input>
-                <button onClick={this.createTodo.bind(this)}>Create</button>
-            </div>
-        );
-    }
-}
 
 
 
