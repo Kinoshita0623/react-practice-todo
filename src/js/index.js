@@ -10,56 +10,29 @@ import TodoForm from './components/TodoForm';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 
-import { todoApp, ActionCreator } from './store';
+import { todoApp, ActionCreator, State } from './store';
 
 
-let store = createStore(todoApp);
+let store = createStore(todoApp, new State());
+console.log("store", store);
+console.log("getState", store.getState());
 
+
+let actionCreator = new ActionCreator();
 
 
 
 class App extends React.Component{
 
-    constructor(){
-        super();
-        
-
-        this.onCreatedTodo = this.onCreatedTodo.bind(this);
-        this.actionCreator = new ActionCreator();
-        
-    }
-
-
-    onCreatedTodo(title){
-        this.dispatch(this.actionCreator.createTodo(title));
-    }
-
-   
     
-
-    
-
-    toggleCompleteTodo(t){
-
-        if(t.isCompleted){
-            this.dispatch(this.actionCreator.unCompleteTodo(t));
-        }else{
-            this.dispatch(this.actionCreator.completeTodo(t));
-        }
-    }
 
     render(){
-        const { todos, dispatch } = this.props;
-        this.dispatch = dispatch;
-        console.log("todos");
-        console.log(todos);
-        console.log("props");
-        console.log(this.props);
+        const { todos, onCreateTodo, onToggleCompleteTodo } = this.props;
         return (
             <div>
                 <h1>Todoリスト</h1>
-                <TodoList todos={todos} onToggleCompleteTodo={this.toggleCompleteTodo.bind(this)}/>
-                <TodoForm createTodo={this.onCreatedTodo.bind(this)}/>
+                <TodoList todos={todos} onToggleCompleteTodo={onToggleCompleteTodo}/>
+                <TodoForm createTodo={onCreateTodo}/>
             </div>
         );
     }
@@ -73,13 +46,26 @@ class App extends React.Component{
     }))
 }*/
 
-function getTodos(state){
+function mapDispatchPropsContainer(dispatch){
     return {
-        todos: state.todos
-    };
+        onCreateTodo: (text)=> dispatch(actionCreator.createTodo(text)),
+        onToggleCompleteTodo: (t)=> {
+            if(t.isCompleted){
+                dispatch(actionCreator.unCompleteTodo(t));
+            }else{
+                dispatch(actionCreator.completeTodo(t));
+            }
+        }
+    }
 }
 
-export default connect(getTodos)(App);
+
+function mapStateToProps(state) {
+    return state
+  }
+  
+
+let Main =  connect(mapStateToProps, mapDispatchPropsContainer)(App);
 
 
 
@@ -89,6 +75,6 @@ console.log(store);
 console.log(store.getState());
 ReactDOM.render(
     <Provider store={store} >
-        <App/>
+        <Main/>
     </Provider>
 , app);

@@ -6,7 +6,6 @@ export {
 
     ActionCreator,
     State,
-    update,
     todoApp
 }
 
@@ -66,64 +65,17 @@ let initialState = {
 }
 
 
-function update(state = initialState, action){
-    console.log(state);
-    switch(action.type){
-        case CREATE_TODO:
-            return new State(
-                [
-                    ...this.state.todos,
-                     {
-                        id: this.state.todos.length,
-                        text: action.text,
-                        isCompleted: false
-                     }
-                ]);
 
-        case DELETE_TODO:
-            return new State(
-                this.state.todos.filter((todo)=>
-                    todo.id == action.todo.id
-                )
-            );
-        case COMPLETE_TODO:
-            return new State(
-                this.state.todos.map((todo)=>{
-                    if(todo.id == action.todo.id){
-                        return {
-                            ...todo,
-                            isCompleted: true
-                        };
-                    }
-                    return todo;
-                })
-            );
-        case UNCOMPLETE_TODO:
-            return new State(
-                this.state.todos.map((todo)=>{
-                    if(todo.id == action.todo.id){
-                        return {
-                            ...todo,
-                            isCompleted: false
-                        };
-                    }
-                    return todo;
-                })
-            );
-        default: return state;
-
-
-    }
-}
 function todos(state = [], action){
-    console.log(state);
+    console.log("todos", state);
+    console.log("action", action);
     switch(action.type){
         case CREATE_TODO:
             return [
-                ...this.state.todos,
+                ...state,
                  {
-                    id: this.state.todos.length,
-                    text: action.text,
+                    id: state.length,
+                    title: action.text,
                     isCompleted: false
                  }
             ]
@@ -135,20 +87,20 @@ function todos(state = [], action){
         case COMPLETE_TODO:
             return state.map((todo)=>{
                 if(todo.id == action.todo.id){
-                    return {
-                        ...todo,
-                        isCompleted: true
-                    };
+                    let t = Object.assign({}, todo);
+
+                    t.isCompleted = true;
+                    return t;
                 }
                 return todo;
             })
         case UNCOMPLETE_TODO:
             return state.map((todo)=>{
                 if(todo.id == action.todo.id){
-                    return {
-                        ...todo,
-                        isCompleted: false
-                    };
+                    let t = Object.assign({}, todo);
+
+                    t.isCompleted = false;
+                    return t;
                 }
                 return todo;
             })
@@ -157,10 +109,10 @@ function todos(state = [], action){
 
     }
 }
-function todoApp(state = {}, action){
+function todoApp(state = initialState, action){
     let s = {
         todos: todos(state.todos, action)
     }
-    console.log(s);
+    console.log("todoApp:", s);
     return s;
 }
